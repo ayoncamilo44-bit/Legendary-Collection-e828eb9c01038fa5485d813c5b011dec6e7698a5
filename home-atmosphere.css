@@ -1,0 +1,265 @@
+body {
+    isolation: isolate;
+}
+
+#collector-atmosphere {
+    position: fixed;
+    z-index: -1;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    contain: strict;
+    perspective: 1200px;
+}
+
+.ambient-paused .collector-card,
+.ambient-paused .collector-mist {
+    animation-play-state: paused;
+}
+
+.collector-mist {
+    position: absolute;
+    width: min(52vw, 46rem);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.12;
+    animation: mist-drift 42s ease-in-out infinite alternate;
+}
+
+.collector-mist-one {
+    top: -24rem;
+    left: 12%;
+    background: radial-gradient(circle, #6366f1 0%, #8b5cf6 28%, transparent 70%);
+}
+
+.collector-mist-two {
+    right: -15rem;
+    bottom: -28rem;
+    background: radial-gradient(circle, #f59e0b 0%, #ec4899 25%, transparent 68%);
+    opacity: 0.08;
+    animation-delay: -18s;
+}
+
+.collector-card {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: clamp(142px, 17vw, 230px);
+    aspect-ratio: 0.68;
+    opacity: 0;
+    transform: translate3d(-42vw, -50vh, 0) rotateZ(-24deg) rotateY(-28deg) scale(0.58);
+    transform-style: preserve-3d;
+    will-change: transform, opacity;
+    animation: card-flight 20s linear infinite;
+}
+
+.collector-card-inner,
+.collector-card-face,
+.collector-card-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+}
+
+.collector-card-inner {
+    overflow: hidden;
+    border: 1px solid rgba(224, 231, 255, 0.7);
+    background: #111827;
+    box-shadow:
+        0 24px 70px rgba(0, 0, 0, 0.46),
+        0 0 35px rgba(99, 102, 241, 0.24),
+        0 0 70px rgba(103, 232, 249, 0.12);
+    transform-style: preserve-3d;
+}
+
+.collector-card-inner::after {
+    position: absolute;
+    inset: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.58);
+    border-radius: 8px;
+    content: "";
+    pointer-events: none;
+}
+
+.collector-card-face {
+    overflow: hidden;
+    backface-visibility: hidden;
+}
+
+.collector-card-face img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.collector-card-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0.55rem;
+    border: 7px solid #202a46;
+    background:
+        radial-gradient(ellipse at center, rgba(99, 102, 241, 0.4), transparent 65%),
+        repeating-linear-gradient(45deg, transparent 0 10px, rgba(255, 255, 255, 0.035) 10px 11px),
+        linear-gradient(145deg, #172137, #080d18);
+    color: #e0e7ff;
+    text-align: center;
+    transform: rotateY(180deg);
+    backface-visibility: hidden;
+}
+
+.collector-card-back::before {
+    position: absolute;
+    inset: 12px;
+    border: 1px solid rgba(165, 180, 252, 0.5);
+    border-radius: 5px;
+    content: "";
+}
+
+.collector-card-back span,
+.collector-card-back strong {
+    z-index: 1;
+}
+
+.collector-card-back span {
+    color: #c7d2fe;
+    font-size: 0.53rem;
+    font-weight: 700;
+    letter-spacing: 0.19em;
+}
+
+.collector-card-back strong {
+    color: #fff;
+    font-size: clamp(1rem, 2vw, 1.65rem);
+    letter-spacing: 0.08em;
+    text-shadow: 0 0 22px rgba(129, 140, 248, 0.7);
+}
+
+.collector-card-football {
+    animation-delay: -15s;
+}
+
+.collector-card-hirsch {
+    animation-delay: -10s;
+}
+
+.collector-card-nflpa {
+    animation-delay: -5s;
+}
+
+.home-primary-cta {
+    box-shadow: 0 10px 35px rgba(99, 102, 241, 0.24), 0 0 0 1px rgba(251, 191, 36, 0.28);
+}
+
+.home-primary-cta:hover,
+.home-primary-cta:focus-visible {
+    box-shadow: 0 12px 42px rgba(99, 102, 241, 0.32), 0 0 0 1px rgba(251, 191, 36, 0.7);
+}
+
+.home-primary-cta:focus-visible {
+    outline: 2px solid #fbbf24;
+    outline-offset: 4px;
+}
+
+@keyframes card-flight {
+    0%, 2% {
+        opacity: 0;
+        transform: translate3d(-42vw, -44vh, 0) rotateZ(-28deg) rotateY(-35deg) scale(0.58);
+    }
+    4% {
+        opacity: 0.3;
+        transform: translate3d(-30vw, -34vh, 0) rotateZ(-15deg) rotateY(0) scale(0.78);
+    }
+    8% {
+        opacity: 0.34;
+        transform: translate3d(-10vw, -8vh, 0) rotateZ(13deg) rotateY(24deg) scale(0.92);
+    }
+    11% {
+        opacity: 0.31;
+        transform: translate3d(12vw, 9vh, 0) rotateZ(-8deg) rotateY(76deg) scale(0.98);
+    }
+    13% {
+        opacity: 0.34;
+        transform: translate3d(27vw, 13vh, 0) rotateZ(9deg) rotateY(150deg) scale(1.04);
+    }
+    14% {
+        opacity: 0.33;
+        transform: translate3d(34vw, -1vh, 0) rotateZ(-7deg) rotateY(190deg) scale(0.99);
+    }
+    16% {
+        opacity: 0.32;
+        transform: translate3d(49vw, 5vh, 0) rotateZ(12deg) rotateY(275deg) scale(0.94);
+    }
+    19% {
+        opacity: 0.28;
+        transform: translate3d(78vw, -24vh, 0) rotateZ(-17deg) rotateY(342deg) scale(0.84);
+    }
+    22% {
+        opacity: 0;
+        transform: translate3d(116vw, -46vh, 0) rotateZ(25deg) rotateY(360deg) scale(0.68);
+    }
+    100% {
+        opacity: 0;
+        transform: translate3d(116vw, -46vh, 0) rotateZ(25deg) rotateY(360deg) scale(0.68);
+    }
+}
+
+@keyframes mist-drift {
+    from { transform: translate3d(-3%, 0, 0) scale(0.96); }
+    to { transform: translate3d(4%, 5%, 0) scale(1.04); }
+}
+
+@media (max-width: 760px) {
+    .collector-card {
+        width: clamp(126px, 36vw, 172px);
+    }
+
+    .collector-mist {
+        width: 78vw;
+        filter: blur(54px);
+        opacity: 0.09;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .collector-card,
+    .collector-mist {
+        animation: none;
+        will-change: auto;
+    }
+
+    .collector-card {
+        top: auto;
+        left: auto;
+        width: 104px;
+        opacity: 0.1;
+        transform: none;
+    }
+
+    .collector-card-baseball {
+        top: 22%;
+        left: 2%;
+    }
+
+    .collector-card-football {
+        top: 42%;
+        right: 2%;
+        left: auto;
+    }
+
+    .collector-card-hirsch {
+        top: auto;
+        bottom: 20%;
+        left: 5%;
+    }
+
+    .collector-card-nflpa {
+        top: auto;
+        right: 5%;
+        bottom: 8%;
+        left: auto;
+    }
+}

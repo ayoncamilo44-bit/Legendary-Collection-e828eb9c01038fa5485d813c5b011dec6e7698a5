@@ -1,0 +1,174 @@
+import { supabase } from './supabase.js';
+import { isSiteAdmin } from './access.js';
+
+let allSigners = [];
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, ch => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[ch]));
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    loadDashboard();
+    setupOwnerImport();
+});
+
+async function setupOwnerImport() {
+    const section = document.getElementById('ownerCsvImport');
+    if (!section || !await isSiteAdmin()) return;
+    section.classList.remove('hidden');
+    setupDragAndDrop();
+}
+
+async function loadDashboard() {
+    const tbody = document.getElementById('dashboardTableBody') || document.querySelector('tbody');
+    if (!tbody) return;
+
+    const { data: signers, error } = await supabase
+        .from('signers')
+        .select('*')
+        .order('name', { ascending: true });
+
+    if (error) {
+        console.error('Supabase Query Error:', error);
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-red-400 text-center">Error loading dashboard: ${error.message}</td></tr>`;
+        return;
+    }
+
+    if (!signers || signers.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-gray-400 text-center">No signers found in database.</td></tr>`;
+        return;
+    }
+
+    allSigners = signers;
+    renderDashboardTable(allSigners);
+}
+
+function renderDashboardTable(data) {
+    const tbody = document.getElementById('dashboardTableBody') || document.querySelector('tbody');
+    if (!tbody) return;
+
+    tbody.innerHTML = data.map(signer => {
+        const ebayUrl = `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(signer.name + ' autographed card')}&mkcid=1&mkrid=711-53200-19255-0&siteid=0&campid=5339215575&customid=LegitimateCollector&toolid=10001&mkevt=1`;
+        const sportlotsUrl = `https://www.sportlots.com/b/ui/search.tpl?search_val=${encodeURIComponent(signer.name)}&Ref=Bets1202`;
+        const scnUrl = `https://www.sportscollectors.net/Search.aspx?search=${encodeURIComponent(signer.name)}`;
+
+        return `
+        <tr class="border-b border-darkBorder hover:bg-darkBg/40 transition">
+            <td class="px-4 py-3 font-semibold text-white">${escapeHtml(signer.name || '-')}</td>
+            <td class="px-4 py-3 text-gray-300">${escapeHtml(signer.sport || '-')} / ${escapeHtml(signer.team || '-')}</td>
+            <td class="px-4 py-3 text-amber-400 font-semibold">${escapeHtml(signer.success_rate || 'N/A')}</td>
+            <td class="px-4 py-3 text-green-400 font-semibold">${escapeHtml(signer.avg_response || 'Pending')}</td>
+            <td class="px-4 py-3 text-gray-400 text-xs font-mono">${escapeHtml(signer.tested_address || '-')}</td>
+            <td class="px-4 py-3 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                    <a href="${ebayUrl}" rel="sponsored nofollow" class="px-2 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 font-semibold rounded text-xs hover:bg-amber-400 hover:text-black transition">eBay</a>
+                    <a href="${sportlotsUrl}" rel="sponsored nofollow" class="px-2 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 font-semibold rounded text-xs hover:bg-amber-400 hover:text-black transition">Sportlots</a>
+                    <a href="${scnUrl}" class="px-2 py-1 bg-darkCard border border-darkBorder text-gray-300 font-semibold rounded text-xs hover:border-amber-400 hover:text-white transition">SCN</a>
+                </div>
+            </td>
+        </tr>
+    `;
+    }).join('');
+}
+
+function setupDragAndDrop() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+
+    if (!dropZone || !fileInput) return;
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    
+    dropZone.addEventListener('dragover', (e) => { 
+        e.preventDefault(); 
+        dropZone.classList.add('border-amber-400'); 
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.classList.remove('border-amber-400');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('border-amber-400');
+        if (e.dataTransfer.files.length) {
+            parseAndUploadCSV(e.dataTransfer.files[0]);
+        }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            parseAndUploadCSV(e.target.files[0]);
+        }
+    });
+}
+
+async function parseAndUploadCSV(file) {
+    const status = document.getElementById('uploadStatus');
+    if (status) {
+        status.textContent = `Parsing ${file.name}...`;
+        status.classList.remove('hidden', 'text-red-400', 'text-green-400');
+    }
+
+    try {
+        if (!await isSiteAdmin()) throw new Error('CSV import is available to the site owner only.');
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
+        if (!session) {
+            throw new Error('Sign in with Google before uploading signer records.');
+        }
+
+        const text = await file.text();
+        if (!window.Papa) {
+            throw new Error('The CSV parser failed to load. Refresh the page and try again.');
+        }
+
+        const parsed = window.Papa.parse(text, {
+            header: true,
+            skipEmptyLines: 'greedy',
+            transformHeader: header => header.trim().toLowerCase()
+        });
+        if (parsed.errors.length) {
+            throw new Error(`Could not read CSV row ${parsed.errors[0].row + 1}: ${parsed.errors[0].message}`);
+        }
+        if (!parsed.meta.fields || !parsed.meta.fields.includes('name')) {
+            throw new Error('CSV file needs a "name" column. Exported spreadsheet CSV files are supported.');
+        }
+
+        const supportedFields = ['name', 'sport', 'team', 'success_rate', 'avg_response', 'tested_address'];
+        const rows = parsed.data
+            .filter(row => String(row.name || '').trim())
+            .map(row => Object.fromEntries(
+                supportedFields
+                    .filter(field => parsed.meta.fields.includes(field))
+                    .map(field => [field, String(row[field] || '').trim()])
+            ));
+        if (rows.length === 0) {
+            throw new Error('CSV file must contain a header row and at least one data row.');
+        }
+
+        const { error } = await supabase.from('signers').insert(rows);
+
+        if (error) {
+            if (status) {
+                status.textContent = error.code === '42501' || /row-level security/i.test(error.message)
+                    ? 'Upload failed: run supabase-setup.sql in the Supabase SQL Editor, then sign in again.'
+                    : `Upload failed: ${error.message}`;
+                status.classList.add('text-red-400');
+            }
+        } else {
+            if (status) {
+                status.textContent = `Successfully uploaded ${rows.length} records.`;
+                status.classList.add('text-green-400');
+            }
+            loadDashboard();
+        }
+    } catch (err) {
+        if (status) {
+            status.textContent = `Error: ${err.message}`;
+            status.classList.add('text-red-400');
+        }
+    }
+}
