@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', () => {
         { label: 'Showcase', href: 'showcase.html' },
         { label: 'Dashboard', href: 'dashboard.html' },
         { label: 'Add Signer', href: 'signer.html' },
-        { label: 'TTM Collector Choice', href: 'https://www.ttm-collector-choice.com/' }
     ];
 
     const drawerHTML = `
