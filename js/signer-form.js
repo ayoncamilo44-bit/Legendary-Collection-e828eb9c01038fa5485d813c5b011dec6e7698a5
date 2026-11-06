@@ -26,18 +26,6 @@ form.addEventListener('submit', async event => {
     }
 
     const values = new FormData(form);
-    const sourceUrl = String(values.get('source_url') || '').trim();
-    if (sourceUrl) {
-        try {
-            const parsedSource = new URL(sourceUrl);
-            if (parsedSource.protocol !== 'https:' && parsedSource.protocol !== 'http:') throw new Error('Invalid protocol');
-        } catch {
-            showStatus('If you provide a source, enter a valid URL beginning with http:// or https://.');
-            document.getElementById('sourceUrl').focus();
-            return;
-        }
-    }
-
     const submission = {
         user_id: session.user.id,
         name: String(values.get('name') || '').trim(),
@@ -46,8 +34,6 @@ form.addEventListener('submit', async event => {
         success_rate: String(values.get('success_rate') || '').trim() || null,
         avg_response: String(values.get('avg_response') || '').trim() || null,
         tested_address: String(values.get('tested_address') || '').trim() || null,
-        source_url: sourceUrl || null,
-        source_date: String(values.get('source_date') || '').trim() || null,
         status: 'pending'
     };
 
