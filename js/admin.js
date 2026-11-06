@@ -25,21 +25,15 @@ function renderSigner(row) {
     const address = row.tested_address
         ? `<p class="text-sm text-gray-300 mt-2">Public address: ${escapeHtml(row.tested_address)}</p>`
         : '<p class="text-sm text-gray-400 mt-2">No public address supplied</p>';
-    const source = row.source_url
-        ? `<p class="text-sm text-gray-400 mt-2">Source: <a href="${escapeHtml(row.source_url)}" target="_blank" rel="noopener noreferrer" class="text-accentHover underline">${escapeHtml(row.source_url)}</a></p>`
-        : '<p class="text-sm text-amber-300 mt-2">No source URL supplied</p>';
-    const date = row.source_date
-        ? `<p class="text-sm text-gray-400 mt-2">Source date: ${escapeHtml(row.source_date)}</p>`
-        : '<p class="text-sm text-gray-400 mt-2">No source date supplied</p>';
     return card(`<h3 class="text-lg font-semibold text-white">${escapeHtml(row.name)}</h3>
-        <p class="text-gray-300">${escapeHtml(row.sport)}${row.team ? ` · ${escapeHtml(row.team)}` : ''}</p>${address}${source}${date}`, row);
+        <p class="text-gray-300">${escapeHtml(row.sport)}${row.team ? ` · ${escapeHtml(row.team)}` : ''}</p>${address}`, row);
 }
 
 async function loadQueues() {
     const target = document.getElementById('signerQueue');
     const count = document.getElementById('signerCount');
     const { data, error } = await supabase.from('signer_submissions')
-        .select('id, name, sport, team, success_rate, avg_response, tested_address, source_url, source_date, created_at')
+        .select('id, name, sport, team, success_rate, avg_response, tested_address, created_at')
         .eq('status', 'pending').order('created_at', { ascending: true });
     if (error) throw error;
     count.textContent = `(${data.length})`;
