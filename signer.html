@@ -1,118 +1,156 @@
-import { supabase } from './supabase.js';
-import { isSiteAdmin } from './access.js';
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="google-site-verification" content="Bf-V4lwA8AEGC1P_8zE4N2MrT1-1uEEP6yN8kSKxH9A">
+    <title>Suggest a Signer | Legendary Collection</title>
+    <meta name="description" content="Suggest a sports signer with a public mailing destination and source for the Legendary Collection directory.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="canonical" href="https://ayoncamilo44-bit.github.io/Legendary-Collection/signer.html">
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Legendary Collection">
+    <meta property="og:title" content="Suggest a Signer | Legendary Collection">
+    <meta property="og:description" content="Suggest a sports signer with a public mailing destination and source.">
+    <meta property="og:url" content="https://ayoncamilo44-bit.github.io/Legendary-Collection/signer.html">
+    <meta property="og:image" content="https://ayoncamilo44-bit.github.io/Legendary-Collection/assets/legitimate-collector-social.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Suggest a Signer | Legendary Collection">
+    <meta name="twitter:description" content="Suggest a sports signer with a public mailing destination and source.">
+    <meta name="twitter:image" content="https://ayoncamilo44-bit.github.io/Legendary-Collection/assets/legitimate-collector-social.png">
+    <link rel="stylesheet" href="./site.css">
+    <link rel="stylesheet" href="./affiliates.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'] }, colors: {
+                darkBg: '#0a0f1a', darkCard: '#131824', darkBorder: '#1e2535', darkHover: '#1a2133',
+                accent: '#6366f1', accentHover: '#818cf8', success: '#10b981', warning: '#f59e0b', danger: '#ef4444'
+            } } }
+        };
+    </script>
+    <style>
+        .glass { background: rgba(19,24,36,.78); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,.1); }
+        .glass-card { background: rgba(19,24,36,.72); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,.08); box-shadow: 0 8px 32px rgba(0,0,0,.28); }
+        .gradient-bg { background: linear-gradient(135deg,#6366f1 0%,#a855f7 55%,#ec4899 100%); }
+        .smooth-transition { transition: all .2s ease; }
+        #drawer-overlay { position:fixed; inset:0; z-index:60; background:rgba(0,0,0,.65); opacity:0; visibility:hidden; transition:.2s; }
+        #drawer-overlay.open { opacity:1; visibility:visible; }
+        #site-drawer { position:fixed; inset:0 auto 0 0; z-index:70; width:18rem; max-width:85vw; padding-bottom:1rem; background:#131824; border-right:1px solid #1e2535; transform:translateX(-100%); visibility:hidden; transition:.2s; display:flex; flex-direction:column; }
+        #site-drawer.open { transform:translateX(0); visibility:visible; }
+        #site-drawer a { display:block; padding:.75rem 1.25rem; color:#d1d5db; border-bottom:1px solid #1e2535; }
+        #site-drawer a:hover, #site-drawer a[aria-current="page"] { color:#fff; background:#1a2133; }
+        input, textarea { color-scheme:dark; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior:auto !important; transition-duration:.01ms !important; } }
+    </style>
+</head>
+<body class="bg-darkBg text-gray-200 min-h-screen font-sans">
+    <header class="glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <button id="mobile-menu-btn" type="button" class="text-white p-2 rounded-lg hover:bg-darkHover" aria-label="Open menu" aria-expanded="false" aria-controls="site-drawer">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+                </button>
+                <a href="./index.html" class="text-lg sm:text-xl font-bold text-white tracking-tight">Legendary Collection</a>
+            </div>
+            <div id="auth-nav-btn" class="hidden sm:block">
+                <button type="button" onclick="loginWithGoogle()" class="px-4 py-2 glass-card text-white rounded-lg text-sm font-semibold hover:bg-darkHover">Sign in</button>
+            </div>
+        </div>
+    </header>
+    <div id="drawer-overlay" aria-hidden="true"></div>
+    <aside id="site-drawer" aria-label="Site menu" aria-hidden="true">
+        <div class="flex items-center justify-between p-4 border-b border-darkBorder">
+            <span class="font-bold text-white">Menu</span>
+            <button id="drawer-close" type="button" aria-label="Close menu" class="p-2 text-gray-300 hover:text-white">✕</button>
+        </div>
+        <nav aria-label="Main navigation" class="overflow-y-auto">
+            <a href="./index.html">Home</a><a href="./directory.html">Signer directory</a><a href="./guides.html">Guides</a>
+            <a href="./supplies.html">Supplies</a><a href="./community.html">Community</a><a href="./showcase.html">Showcase</a>
+            <a href="./dashboard.html">Dashboard</a><a href="./signer.html" aria-current="page">Add Signer</a>
+        </nav>
+        <div id="mobile-auth-slot" class="p-4"></div>
+    </aside>
 
-const status = document.getElementById('adminStatus');
-const queues = document.getElementById('adminQueues');
+    <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-10 md:py-14">
+        <div class="max-w-3xl mx-auto">
+            <div class="mb-8">
+                <p class="text-xs font-semibold tracking-widest uppercase text-accentHover mb-2">Community contribution</p>
+                <h1 class="text-3xl md:text-4xl font-bold text-white mb-3">Suggest a signer</h1>
+                <p class="text-gray-400 leading-relaxed">Share a signer record with a public, verifiable mailing destination. Suggestions are reviewed by the site owner before appearing in the directory.</p>
+            </div>
+            <section class="glass-card rounded-2xl p-5 sm:p-8" aria-labelledby="signer-form-heading">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-11 h-11 rounded-xl bg-accent/20 flex items-center justify-center"><i data-lucide="user-plus" class="w-5 h-5 text-accent" aria-hidden="true"></i></div>
+                    <div><h2 id="signer-form-heading" class="text-xl font-bold text-white">Signer details</h2><p class="text-sm text-gray-400">Fields marked required must be provided.</p></div>
+                </div>
+                <form id="addSignerForm" class="space-y-5">
+                    <div>
+                        <label for="playerName" class="block text-sm font-medium text-gray-300 mb-2">Signer name <span aria-hidden="true">*</span></label>
+                        <input type="text" id="playerName" name="name" maxlength="200" autocomplete="name" required placeholder="e.g., Alex Morgan" class="w-full px-4 py-3 bg-darkBg/70 border border-darkBorder rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-accent">
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div><label for="sport" class="block text-sm font-medium text-gray-300 mb-2">Sport <span aria-hidden="true">*</span></label><input type="text" id="sport" name="sport" maxlength="120" required placeholder="e.g., Soccer" class="w-full px-4 py-3 bg-darkBg/70 border border-darkBorder rounded-xl placeholder-gray-500 focus:outline-none focus:border-accent"></div>
+                        <div><label for="team" class="block text-sm font-medium text-gray-300 mb-2">Team (optional)</label><input type="text" id="team" name="team" maxlength="120" placeholder="e.g., Orlando Pride" class="w-full px-4 py-3 bg-darkBg/70 border border-darkBorder rounded-xl placeholder-gray-500 focus:outline-none focus:border-accent"></div>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div><label for="successRate" class="block text-sm font-medium text-gray-300 mb-2">Reported success rate (optional)</label><input type="text" id="successRate" name="success_rate" maxlength="20" placeholder="e.g., 75%" class="w-full px-4 py-3 bg-darkBg/70 border border-darkBorder rounded-xl placeholder-gray-500 focus:outline-none focus:border-accent"></div>
+                        <div><label for="avgResponse" class="block text-sm font-medium text-gray-300 mb-2">Average response time (optional)</label><input type="text" id="avgResponse" name="avg_response" maxlength="120" placeholder="e.g., 3 months" class="w-full px-4 py-3 bg-darkBg/70 border border-darkBorder rounded-xl placeholder-gray-500 focus:outline-none focus:border-accent"></div>
+                    </div>
+                    <div>
+                        <label for="testedAddress" class="block text-sm font-medium text-gray-300 mb-2">Public mailing destination (optional)</label>
+                        <textarea id="testedAddress" name="tested_address" rows="3" maxlength="2000" placeholder="Public team, venue, or business mailing address only" class="w-full px-4 py-3 bg-darkBg/70 border border-darkBorder rounded-xl placeholder-gray-500 focus:outline-none focus:border-accent"></textarea>
+                        <p class="text-xs text-gray-500 mt-2">Never submit a private home address or personal contact information.</p>
+                    </div>
+                    <div class="grid sm:grid-cols-2 gap-5">
+                        <div><label for="sourceUrl" class="block text-sm font-medium text-gray-300 mb-2">Public source URL <span aria-hidden="true">*</span></label><input type="url" id="sourceUrl" name="source_url" maxlength="2000" required placeholder="https://example.com/source" class="w-full px-4 py-3 bg-darkBg/70 border border-darkBorder rounded-xl placeholder-gray-500 focus:outline-none focus:border-accent"></div>
+                        <div><label for="sourceDate" class="block text-sm font-medium text-gray-300 mb-2">Source date (optional)</label><input type="date" id="sourceDate" name="source_date" class="w-full px-4 py-3 bg-darkBg/70 border border-darkBorder rounded-xl text-gray-200 focus:outline-none focus:border-accent"></div>
+                    </div>
+                    <p id="signerFormStatus" class="hidden text-sm" role="status" aria-live="polite" tabindex="-1"></p>
+                    <button id="signerSubmitButton" type="submit" class="w-full px-5 py-3 gradient-bg text-white font-semibold rounded-xl hover:brightness-110 disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"><i data-lucide="send" class="w-5 h-5" aria-hidden="true"></i>Submit suggestion</button>
+                </form>
+            </section>
+            <p class="text-center text-xs text-gray-500 mt-5">By submitting, you confirm the information is public and appropriately sourced.</p>
+        </div>
+    </main>
 
-function escapeHtml(value) {
-    return String(value ?? '').replace(/[&<>"']/g, ch => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    }[ch]));
-}
-
-function dateLabel(value) {
-    return value ? new Date(value).toLocaleString() : '';
-}
-
-function card(content, row, table) {
-    return '<article class="rounded-xl border border-darkBorder bg-darkBg/60 p-5">' +
-        '<div>' + content + '</div>' +
-        '<p class="text-xs text-gray-500 mt-3">Submitted ' + escapeHtml(dateLabel(row.created_at)) + ' by ' + escapeHtml(row.author_name || 'collector') + '</p>' +
-        '<div class="flex flex-wrap gap-3 mt-4">' +
-        '<button class="review-action px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-semibold" data-table="' + table + '" data-id="' + escapeHtml(row.id) + '" data-action="approve">Approve</button>' +
-        '<button class="review-action px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white font-semibold" data-table="' + table + '" data-id="' + escapeHtml(row.id) + '" data-action="reject">Reject</button>' +
-        '</div></article>';
-}
-
-function renderSigner(row) {
-    const address = row.tested_address ? '<p class="text-sm text-gray-300 mt-2">Public address: ' + escapeHtml(row.tested_address) + '</p>' : '<p class="text-sm text-gray-400 mt-2">No public address supplied</p>';
-    const source = row.source_url ? '<p class="text-sm text-gray-400 mt-2">Source: <a href="' + escapeHtml(row.source_url) + '" target="_blank" rel="noopener noreferrer" class="text-accentHover underline break-all">' + escapeHtml(row.source_url) + '</a></p>' : '<p class="text-sm text-gray-400 mt-2">No source URL supplied</p>';
-    const date = row.source_date ? '<p class="text-sm text-gray-400 mt-2">Source date: ' + escapeHtml(row.source_date) + '</p>' : '<p class="text-sm text-gray-400 mt-2">No source date supplied</p>';
-    return card('<h3 class="text-lg font-semibold text-white">' + escapeHtml(row.name) + '</h3>' +
-        '<p class="text-gray-300">' + escapeHtml(row.sport) + (row.team ? ' · ' + escapeHtml(row.team) : '') + '</p>' +
-        address +
-        source +
-        date, row, 'signer_submissions');
-}
-
-function safePhoto(value, label) {
-    if (!value || !/^https:\/\//i.test(value)) return '';
-    return '<a href="' + escapeHtml(value) + '" target="_blank" rel="noopener noreferrer" class="mt-3 inline-block text-sm text-accentHover underline">View submitted photo: ' + label + '</a>';
-}
-
-function renderPost(row) {
-    return card('<h3 class="text-lg font-semibold text-white">' + escapeHtml(row.player_name) + ' · ' + escapeHtml(row.result) + '</h3>' +
-        '<p class="text-sm text-gray-300 mt-2 whitespace-pre-line">' + escapeHtml(row.experience) + '</p>' +
-        safePhoto(row.image_url, 'Submitted community post photo'), row, 'community_posts');
-}
-
-function renderStory(row) {
-    return card('<p class="text-xs uppercase tracking-wide text-accentHover">' + escapeHtml(row.tag) + '</p>' +
-        '<h3 class="text-lg font-semibold text-white mt-1">' + escapeHtml(row.title) + '</h3>' +
-        '<p class="text-sm text-gray-300 mt-2 whitespace-pre-line">' + escapeHtml(row.story) + '</p>' +
-        safePhoto(row.image_url, 'Submitted story photo'), row, 'showcase_stories');
-}
-
-async function loadQueue(table, columns, targetId, countId, renderer) {
-    const target = document.getElementById(targetId);
-    const count = document.getElementById(countId);
-    const { data, error } = await supabase.from(table).select(columns).eq('status', 'pending').order('created_at', { ascending: true });
-    if (error) throw error;
-    count.textContent = '(' + data.length + ')';
-    target.innerHTML = data.length ? data.map(row => renderer(row)).join('') : '<p class="text-gray-400 text-sm">Nothing waiting for review.</p>';
-}
-
-async function loadQueues() {
-    await loadQueue('signer_submissions', 'id, user_id, name, sport, team, success_rate, avg_response, tested_address, source_url, source_date, created_at', 'signerQueue', 'signerCount', renderSigner);
-}
-
-document.addEventListener('click', async event => {
-    const button = event.target.closest('.review-action');
-    if (!button) return;
-    button.disabled = true;
-    status.textContent = 'Saving your review…';
-    try {
-        const approve = button.dataset.action === 'approve';
-        let error;
-        if (button.dataset.table === 'signer_submissions') {
-            ({ error } = await supabase.rpc('review_signer_submission', {
-                p_submission_id: button.dataset.id,
-                p_approve: approve
-            }));
-        }
-        if (error) throw error;
-        status.textContent = approve ? 'Approved.' : 'Rejected.';
-        await loadQueues();
-    } catch (error) {
-        console.error('Could not review submission:', error);
-        status.textContent = 'Could not save the review: ' + (error.message || 'Database error');
-        button.disabled = false;
-    }
-});
-
-document.getElementById('signOutButton').addEventListener('click', () => window.logout());
-
-window.addEventListener('DOMContentLoaded', async () => {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    if (error || !session) {
-        status.textContent = 'Sign in with the site owner account to continue.';
-        const signIn = document.createElement('button');
-        signIn.className = 'mt-4 px-4 py-2 rounded-lg bg-accent text-white font-semibold';
-        signIn.textContent = 'Sign in with Google';
-        signIn.addEventListener('click', () => window.loginWithGoogle());
-        status.append(signIn);
-        return;
-    }
-    if (!await isSiteAdmin()) {
-        status.textContent = 'This page is restricted to the site owner.';
-        return;
-    }
-    status.textContent = 'Owner access confirmed.';
-    queues.classList.remove('hidden');
-    try {
-        await loadQueues();
-    } catch (error) {
-        console.error('Could not load the moderation queue:', error);
-        status.textContent = 'Could not load submissions: ' + (error.message || 'Database error');
-    }
-});
+    <footer class="glass border-t border-darkBorder py-8 px-4 sm:px-6 mt-10">
+        <div class="max-w-7xl mx-auto text-center text-sm text-gray-500">
+            <nav class="mb-4 flex flex-wrap justify-center gap-4" aria-label="Information">
+                <a href="./guides.html" class="hover:text-white">Guides</a><a href="./about.html" class="hover:text-white">About</a><a href="./contact.html" class="hover:text-white">Contact</a><a href="./privacy.html" class="hover:text-white">Privacy</a><a href="./terms.html" class="hover:text-white">Terms</a>
+                <button type="button" data-analytics-settings hidden>Cookie settings</button>
+            </nav>
+            &copy; 2026 Legendary Collection. Powered by Supabase &amp; GitHub Pages.
+        </div>
+    </footer>
+    <script>
+        (() => {
+            const button = document.getElementById('mobile-menu-btn');
+            const drawer = document.getElementById('site-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            const close = document.getElementById('drawer-close');
+            const setOpen = open => {
+                drawer.classList.toggle('open', open); overlay.classList.toggle('open', open);
+                drawer.setAttribute('aria-hidden', String(!open)); button.setAttribute('aria-expanded', String(open));
+                document.body.style.overflow = open ? 'hidden' : '';
+                if (open) { const auth = document.getElementById('auth-nav-btn'); if (auth) document.getElementById('mobile-auth-slot').innerHTML = auth.innerHTML; close.focus(); }
+            };
+            button.addEventListener('click', () => setOpen(!drawer.classList.contains('open')));
+            close.addEventListener('click', () => { setOpen(false); button.focus(); });
+            overlay.addEventListener('click', () => setOpen(false));
+            drawer.addEventListener('click', event => { if (event.target.closest('a')) setOpen(false); });
+            document.addEventListener('keydown', event => { if (event.key === 'Escape' && drawer.classList.contains('open')) { setOpen(false); button.focus(); } });
+        })();
+        if (window.lucide) window.lucide.createIcons();
+    </script>
+    <script type="module" src="./js/signer-form.js"></script>
+    <script type="module" src="./js/auth.js"></script>
+    <script type="module" src="./js/analytics.js"></script>
+</body>
+</html>
