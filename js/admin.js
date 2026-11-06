@@ -10,23 +10,20 @@ function escapeHtml(value) {
     })[character]);
 }
 
-function card(content, row) {
+function card(row) {
+    const address = row.tested_address
+        ? `<p class="text-sm text-gray-300 mt-2">Public address: ${escapeHtml(row.tested_address)}</p>`
+        : '<p class="text-sm text-gray-400 mt-2">No public address supplied</p>';
     return `<article class="rounded-xl border border-darkBorder bg-darkBg/60 p-5">
-        <div>${content}</div>
+        <h3 class="text-lg font-semibold text-white">${escapeHtml(row.name)}</h3>
+        <p class="text-gray-300">${escapeHtml(row.sport)}${row.team ? ` · ${escapeHtml(row.team)}` : ''}</p>
+        ${address}
         <p class="text-xs text-gray-500 mt-3">Submitted ${escapeHtml(row.created_at ? new Date(row.created_at).toLocaleString() : '')}</p>
         <div class="flex flex-wrap gap-3 mt-4">
             <button type="button" class="review-action px-4 py-2 rounded-lg bg-emerald-700 hover:bg-emerald-600 text-white font-semibold" data-id="${escapeHtml(row.id)}" data-action="approve">Approve</button>
             <button type="button" class="review-action px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white font-semibold" data-id="${escapeHtml(row.id)}" data-action="reject">Reject</button>
         </div>
     </article>`;
-}
-
-function renderSigner(row) {
-    const address = row.tested_address
-        ? `<p class="text-sm text-gray-300 mt-2">Public address: ${escapeHtml(row.tested_address)}</p>`
-        : '<p class="text-sm text-gray-400 mt-2">No public address supplied</p>';
-    return card(`<h3 class="text-lg font-semibold text-white">${escapeHtml(row.name)}</h3>
-        <p class="text-gray-300">${escapeHtml(row.sport)}${row.team ? ` · ${escapeHtml(row.team)}` : ''}</p>${address}`, row);
 }
 
 async function loadQueues() {
@@ -37,12 +34,12 @@ async function loadQueues() {
         .eq('status', 'pending').order('created_at', { ascending: true });
     if (error) throw error;
     count.textContent = `(${data.length})`;
-    target.innerHTML = data.length ? data.map(renderSigner).join('') : '<p class="text-gray-400 text-sm">Nothing waiting for review.</p>';
+    target.innerHTML = data.length ? data.map(card).join('') : '<p class="text-gray-400 text-sm">Nothing waiting for review.</p>';
 }
 
 document.addEventListener('click', async event => {
     const button = event.target.closest('.review-action');
-    if (!button) return;
+    if (!button || !status) return;
     button.disabled = true;
     status.textContent = 'Saving your review…';
     try {
