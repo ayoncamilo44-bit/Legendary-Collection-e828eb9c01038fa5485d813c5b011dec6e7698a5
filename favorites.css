@@ -1,0 +1,28 @@
+* { box-sizing: border-box; }
+body.favorites-page { margin: 0; min-height: 100vh; background: #0a0f1a; color: #e5e7eb; font: 16px/1.5 system-ui, sans-serif; }
+.favorites-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem max(1.25rem, calc((100% - 64rem) / 2)); border-bottom: 1px solid #263044; background: #131824; }
+.favorites-header a { color: #dbeafe; text-decoration: none; }
+.favorites-header nav { display: flex; gap: 1rem; }
+.brand { font-weight: 700; }
+.favorites-main { width: min(100% - 2rem, 64rem); margin: 2rem auto; }
+.favorites-main h1 { margin-bottom: .25rem; color: #fff; }
+.intro { margin-top: 0; color: #9ca3af; }
+.panel { margin: 1.25rem 0; padding: 1.25rem; border: 1px solid #263044; border-radius: 1rem; background: #131824; }
+.panel h2 { margin-top: 0; color: #fff; font-size: 1.2rem; }
+.panel label { display: block; margin-bottom: .4rem; color: #cbd5e1; }
+#signerSearch { display: block; width: 100%; padding: .8rem 1rem; border: 1px solid #39445a; border-radius: .65rem; background: #0a0f1a; color: #fff; font: inherit; }
+#signerSearch:focus { outline: 2px solid #818cf8; outline-offset: 1px; }
+.signer-list { display: grid; gap: .75rem; margin-top: 1rem; color: #9ca3af; }
+.signer-card { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid #263044; border-radius: .75rem; }
+.signer-card h3, .signer-card p { margin: 0; }
+.signer-card h3 { color: #fff; }
+.signer-card p { margin-top: .2rem; color: #9ca3af; font-size: .9rem; }
+.primary-button, .secondary-button { padding: .6rem .9rem; border: 0; border-radius: .55rem; background: #6366f1; color: white; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.secondary-button { border: 1px solid #475569; background: #1e293b; }
+button:disabled { opacity: .6; cursor: wait; }
+#statusMessage { min-height: 1.5em; color: #a5b4fc; }
+[hidden] { display: none !important; }
+@media (max-width: 560px) {
+  .favorites-header { align-items: flex-start; flex-direction: column; }
+  .signer-card { align-items: flex-start; flex-direction: column; }
+}

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0f1a">
+  <title>My Saved Signers | Legendary Collection</title>
+  <link rel="stylesheet" href="./site.css">
+  <link rel="stylesheet" href="./favorites.css">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+</head>
+<body class="favorites-page">
+  <header class="favorites-header">
+    <a class="brand" href="./index.html">Legendary Collection</a>
+    <nav aria-label="Main navigation">
+      <a href="./directory.html">Directory</a>
+      <a href="./dashboard.html">Dashboard</a>
+    </nav>
+  </header>
+
+  <main class="favorites-main">
+    <h1>My Saved Signers</h1>
+    <p class="intro">Keep the signers you’re interested in close at hand.</p>
+
+    <section id="signInPanel" class="panel" hidden>
+      <h2>Sign in to save signers</h2>
+      <p>Your saved list is private to your account.</p>
+      <button id="signInButton" class="primary-button" type="button">Sign in with Google</button>
+    </section>
+
+    <div id="collectionContent" hidden>
+      <p id="statusMessage" role="status" aria-live="polite"></p>
+      <section class="panel" aria-labelledby="searchHeading">
+        <h2 id="searchHeading">Find a signer to save</h2>
+        <label for="signerSearch">Search by name</label>
+        <input id="signerSearch" type="search" placeholder="Type at least 2 characters" autocomplete="off">
+        <div id="searchResults" class="signer-list" aria-live="polite"></div>
+      </section>
+
+      <section class="panel" aria-labelledby="savedHeading">
+        <h2 id="savedHeading">Saved signers</h2>
+        <div id="savedSigners" class="signer-list" aria-live="polite"></div>
+      </section>
+    </div>
+  </main>
+
+  <script type="module" src="./js/favorites.js"></script>
+</body>
+</html>
